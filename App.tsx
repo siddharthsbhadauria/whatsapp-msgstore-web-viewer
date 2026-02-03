@@ -155,6 +155,28 @@ const App: React.FC = () => {
     }
   }, [maxMessages]);
 
+  // Auto-load msgstore.db if present in the root directory
+  useEffect(() => {
+    const autoLoad = async () => {
+      const candidates = ['msgstore.db', 'msgstore.db.crypt15', 'msgstore.db.crypt14', 'msgstore.db.crypt12'];
+      
+      for (const filename of candidates) {
+        try {
+          const res = await fetch(`./${filename}`);
+          if (res.ok && res.headers.get('content-type')?.indexOf('text/html') === -1) {
+            const blob = await res.blob();
+            const file = new File([blob], filename);
+            await processFile(file);
+            return;
+          }
+        } catch (e) {
+          // Continue to next candidate
+        }
+      }
+    };
+    autoLoad();
+  }, []);
+
   if (!dbLoaded) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center p-4">

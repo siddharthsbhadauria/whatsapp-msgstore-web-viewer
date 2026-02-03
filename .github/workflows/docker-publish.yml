@@ -2,7 +2,7 @@ name: Publish Docker image
 
 on:
   push:
-    branches: [ "main", "feature/dockerization" ]
+    branches: [ "feature/custom-build" ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   pull_request:
@@ -10,7 +10,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: ${{ github.repository_owner }}/wa-viewer-custom
 
 jobs:
   build-and-push:

@@ -18,6 +18,9 @@ RUN npm run build -- --base=${BASE_PATH}
 # Stage 2: Serve with Nginx
 # We use a lightweight Nginx image to serve the static files
 FROM nginx:alpine
+# Create volume mount point and copy custom config
+RUN mkdir -p /data
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Copy the built artifacts from the previous stage to Nginx's html directory
 COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 80

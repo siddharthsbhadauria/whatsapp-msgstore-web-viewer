@@ -107,7 +107,15 @@ If you prefer to build the image manually without Docker Compose:
 
 You can also pull the pre-built image from the GitHub Container Registry:
 
-    docker run -d -p 8080:80 ghcr.io/siddharthsbhadauria/whatsapp-msgstore-web-viewer:main
+    docker run -d -p 8080:80 ghcr.io/siddharthsbhadauria/wa-viewer-custom:feature-custom-build
+
+### Auto-loading a Database
+
+To automatically load a database file when the app opens, mount the directory containing your `msgstore.db` (or encrypted backup) to `/data` inside the container:
+
+```bash
+docker run -d -p 8080:80 -v /path/to/your/whatsapp-backups:/data ghcr.io/siddharthsbhadauria/wa-viewer-custom:feature-custom-build
+```
 
 ## License
 
