@@ -63,9 +63,10 @@ export const getMessages = (chatRowId: number, limit: number = 5000): Message[] 
       message.from_me,
       message.text_data,
       message.timestamp,
-      (SELECT text_data FROM message_quoted WHERE message_quoted.message_row_id = message._id) AS quoted_text
+      message_quoted.text_data AS quoted_text
     FROM
       message
+    LEFT JOIN message_quoted ON message_quoted.message_row_id = message._id
     WHERE
       message.chat_row_id = ${chatRowId}
     ORDER BY

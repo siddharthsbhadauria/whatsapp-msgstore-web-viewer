@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { Message, Conversation } from '../types';
 import { MessageBubble } from './MessageBubble';
 import { Phone, Video, Search, MoreVertical } from 'lucide-react';
@@ -51,7 +51,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ messages, conversation, 
     );
   }
 
-  const messageGroups = groupMessagesByDate(messages);
+  const messageGroups = useMemo(() => groupMessagesByDate(messages), [messages]);
 
   return (
     <div className="flex-1 flex flex-col h-full bg-[#efeae2] relative w-full min-w-0">
