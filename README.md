@@ -103,6 +103,12 @@ If you prefer to build the image manually without Docker Compose:
     docker run -d -p 8080:80 --name whatsapp-msgstore-web-viewer whatsapp-msgstore-web-viewer
     ```
 
+### Using Pre-built Image
+
+You can also pull the pre-built image from the GitHub Container Registry:
+
+    docker run -d -p 8080:80 ghcr.io/siddharthsbhadauria/whatsapp-msgstore-web-viewer:main
+
 ## License
 
 Open source. Feel free to fork and improve!
