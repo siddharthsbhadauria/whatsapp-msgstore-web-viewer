@@ -18,31 +18,6 @@ export const initDatabase = async (buffer: ArrayBuffer): Promise<void> => {
   });
 
   dbInstance = new SQL.Database(new Uint8Array(buffer));
-
-  // OPTIMIZATION: Tune SQLite for in-memory performance and create missing indices
-  try {
-    dbInstance.exec(`
-      PRAGMA temp_store = MEMORY;
-      PRAGMA journal_mode = MEMORY;
-      PRAGMA cache_size = -100000; -- Increase cache to ~100MB
-      PRAGMA synchronous = OFF;
-    `);
-
-    // Create indices to speed up lookups. We try/catch individually in case tables are missing (older DBs).
-    const indices = [
-      "CREATE INDEX IF NOT EXISTS idx_chat_sort_timestamp ON chat(sort_timestamp);",
-      "CREATE INDEX IF NOT EXISTS idx_chat_jid_row_id ON chat(jid_row_id);",
-      "CREATE INDEX IF NOT EXISTS idx_message_chat_row_id ON message(chat_row_id);",
-      "CREATE INDEX IF NOT EXISTS idx_message_sort_id ON message(sort_id);",
-      "CREATE INDEX IF NOT EXISTS idx_message_quoted_message_row_id ON message_quoted(message_row_id);"
-    ];
-
-    for (const idx of indices) {
-      try { dbInstance.exec(idx); } catch (e) { /* Ignore errors for missing tables */ }
-    }
-  } catch (e) {
-    console.warn("Database optimization steps failed", e);
-  }
 };
 
 export const getConversations = (limit: number = 1000): Conversation[] => {
@@ -88,10 +63,9 @@ export const getMessages = (chatRowId: number, limit: number = 5000): Message[] 
       message.from_me,
       message.text_data,
       message.timestamp,
-      message_quoted.text_data AS quoted_text
+      (SELECT text_data FROM message_quoted WHERE message_quoted.message_row_id = message._id) AS quoted_text
     FROM
       message
-    LEFT JOIN message_quoted ON message_quoted.message_row_id = message._id
     WHERE
       message.chat_row_id = ${chatRowId}
     ORDER BY
